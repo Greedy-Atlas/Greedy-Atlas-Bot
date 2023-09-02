@@ -24,6 +24,16 @@ while cv2.waitKey(33) < 0 :
   contours, hier = cv2.findContours(mask_green.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
   output = cv2.drawContours(seg_cone, contours, -1, (0,0,255), 3)
 
+  height, width, channel = output.shape
+  color_save = open('color.txt', 'w')
+  for y in range(0, height):
+    for x in range(0, width):
+      b = output.item(y, x, 0)
+      g = output.item(y, x, 1)
+      r = output.item(y, x, 2)
+
+      color_save.write(f'({x},{y}) : blue: {b}, green: {g}, red: {r} \n')
+  color_save.close()
 
   cv2.imshow("VideoFrame", frame)
   cv2.imshow("HSV track Bar", output)
