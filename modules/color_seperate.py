@@ -24,16 +24,22 @@ while cv2.waitKey(33) < 0 :
   contours, hier = cv2.findContours(mask_green.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
   output = cv2.drawContours(seg_cone, contours, -1, (0,0,255), 3)
 
-  height, width, channel = output.shape
-  color_save = open('color.txt', 'w')
-  for y in range(0, height):
-    for x in range(0, width):
-      b = output.item(y, x, 0)
-      g = output.item(y, x, 1)
-      r = output.item(y, x, 2)
+  # Calc Moments
+  output_dst = output.copy()
+  gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
+  ret, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
 
-      color_save.write(f'({x},{y}) : blue: {b}, green: {g}, red: {r} \n')
-  color_save.close()
+  contours, hierarchy = cv2.findContours(binary, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
 
+  for i in contours:
+    M = cv2.moments(i)
+    if(M['m00'] == 0): continue
+    cX = int(M['m10'] / M['m00'])
+    cY = int(M['m01'] / M['m00'])
+
+    cv2.circle(output_dst, (cX, cY), 3, (255, 100, 0), -1)
+
+  frame = cv2.flip(frame, 1)
+  output_dst = cv2.flip(output_dst, 1)
   cv2.imshow("VideoFrame", frame)
-  cv2.imshow("HSV track Bar", output)
+  cv2.imshow("HSV track Bar", output_dst)
