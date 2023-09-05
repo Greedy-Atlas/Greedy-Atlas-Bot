@@ -1,10 +1,13 @@
 import cv2
 import numpy as np
 
+WIDTH = 640
+HEIGHT = 480
+
 # Camera Setting
 capture = cv2.VideoCapture(0)
-capture.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+capture.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
+capture.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
 
 # Running part
 while cv2.waitKey(33) < 0 :
@@ -37,6 +40,7 @@ while cv2.waitKey(33) < 0 :
     cX = int(M['m10'] / M['m00'])
     cY = int(M['m01'] / M['m00'])
 
+    if(cX >= WIDTH/2-1 and cX <=WIDTH/2+1 and cY >= HEIGHT/2-1 and cY <= HEIGHT/2+1): continue
     cv2.circle(output_dst, (cX, cY), 3, (255, 100, 0), -1)
 
   frame = cv2.flip(frame, 1)
